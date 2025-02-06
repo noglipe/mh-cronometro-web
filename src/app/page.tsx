@@ -1,101 +1,100 @@
-import Image from "next/image";
+"use client"
+import { useState, useEffect } from "react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [time, setTime] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [savedTimes, setSavedTimes] = useState<{ time: number; interference: boolean; index: number }[]>([]);
+  const [interference, setInterference] = useState(false);
+  const [count, setCount] = useState(1);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isRunning) {
+      interval = setInterval(() => {
+        setTime((prev) => prev + 1);
+      }, 10);
+    } else if (interval) {
+      clearInterval(interval);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isRunning]);
+
+  const handleStartPause = () => {
+    setIsRunning((prev) => !prev);
+  };
+
+  const handleReset = () => {
+    setIsRunning(false);
+    setTime(0);
+  };
+
+  const handleSave = () => {
+    setSavedTimes((prev) => [...prev, { time, interference, index: count }].sort((a, b) => a.time - b.time));
+    setCount((prev) => prev + 1);
+    setIsRunning(false);
+    setTime(0);
+  };
+
+  const handleClearRecords = () => {
+    setSavedTimes([]);
+    setCount(1);
+  };
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 6000);
+    const seconds = Math.floor((time % 6000) / 100);
+    const milliseconds = time % 100;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}:${String(milliseconds).padStart(2, "0")}`;
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen p-8 gap-6 font-mono">
+      <div className="text-8xl font-bold">{formatTime(time)}</div>
+      <label className="flex text-2xl items-center gap-2">
+        <input type="checkbox" className="w-6 h-6" checked={interference} onChange={() => setInterference((prev) => !prev)} />
+        Interferência
+      </label>
+      <div className="flex gap-4">
+        <button
+          className="px-4 py-2 bg-green-500 text-white rounded-md"
+          onClick={handleStartPause}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          {isRunning ? "Pausar" : "Iniciar"}
+        </button>
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded-md"
+          onClick={handleSave}
+          disabled={time === 0}
         >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          Registrar
+        </button>
+        <button
+          className="px-4 py-2 bg-red-500 text-white rounded-md"
+          onClick={handleReset}
         >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          Zerar
+        </button>
+        <button
+          className="px-4 py-2 bg-gray-500 text-white rounded-md"
+          onClick={handleClearRecords}
+          disabled={savedTimes.length === 0}
+        >
+          Limpar Registros
+        </button>
+      </div>
+      
+      <div className="mt-4 w-1/3 max-h-60 overflow-auto border rounded-md p-2">
+        <ul className="w-full text-center">
+          {savedTimes.map(({ time, interference, index }) => (
+            <li key={index} className={`hover:bg-gray-800 py-1 text-lg ${interference ? 'text-red-500' : ''}`}>
+              {index}º tempo : {formatTime(time)} {interference ? '*' : ''}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
