@@ -1,5 +1,10 @@
 "use client"
+import Button from "@/components/Button";
+import Lista from "@/components/Lista";
 import { useState, useEffect } from "react";
+
+import logo from '@/assets/images/logo-clara.png'
+import Image from "next/image";
 
 export default function Home() {
   const [time, setTime] = useState(0);
@@ -51,50 +56,49 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8 gap-6 font-mono">
-      <div className="text-7xl font-bold">{formatTime(time)}</div>
-      <label className="flex text-2xl items-center gap-2">
-        <input type="checkbox" className="w-4 h-4" checked={interference} onChange={() => setInterference((prev) => !prev)} />
+    <div className="flex flex-col items-center justify-center min-h-screen p-8 gap-3 font-mono">
+      <div className=""> 
+        <Image 
+        src={logo} 
+        alt="Logo Marca Mente Humana" 
+        width={'150'}
+        className="rounded-xl" 
+        /> 
+        </div>
+
+      <div className="sm:text-7xl text-7xl pt-5 font-bold">{formatTime(time)}</div>
+      <label className="flex sm:text-2xl text-xl items-center gap-2">
+        <input type="checkbox" className="sm:w-6 sm:h-6 w-4 h-4" checked={interference} onChange={() => setInterference((prev) => !prev)} />
         Interferência
       </label>
-      <div className="flex gap-2">
-        <button
-          className="px-3 py-2 bg-green-500 text-white rounded-md"
-          onClick={handleStartPause}
-        >
+      <div className="sm:flex grid grid-cols-2 mt-2 sm:mt-0 gap-2 text-sm">
+        <Button 
+        onClick={handleStartPause} 
+        h={"hover:bg-green-600"}>
           {isRunning ? "Pausar" : "Iniciar"}
-        </button>
-        <button
-          className="px-3 py-2 bg-blue-500 text-white rounded-md"
-          onClick={handleSave}
-          disabled={time === 0}
-        >
+        </Button>
+        <Button 
+        onClick={handleSave} 
+        disabled={time === 0}
+        h={"hover:bg-blue-600"}>
           Registrar
-        </button>
-        <button
-          className="px-3 py-2 bg-red-500 text-white rounded-md"
-          onClick={handleReset}
-        >
+        </Button>
+        <Button 
+        onClick={handleReset} 
+        disabled={time === 0} 
+        h={"hover:bg-red-600"}>
           Zerar
-        </button>
-        <button
-          className="px-3 py-2 bg-gray-500 text-white rounded-md"
-          onClick={handleClearRecords}
-          disabled={savedTimes.length === 0}
-        >
+        </Button>
+        <Button 
+        h={"hover:bg-gray-600"}
+        onClick={handleClearRecords} 
+        disabled={savedTimes.length === 0}>
           Limpar Registros
-        </button>
+        </Button>
       </div>
-      
-      <div className="mt-4 sm:w-1/3 w-full max-h-96 overflow-auto border rounded-md p-2">
-        <ul className="w-full text-center">
-          {savedTimes.map(({ time, interference, index }) => (
-            <li key={index} className={`hover:bg-gray-800 py-1 text-lg ${interference ? 'text-red-500' : ''}`}>
-              {index}º tempo : {formatTime(time)} {interference ? '*' : ''}
-            </li>
-          ))}
-        </ul>
-      </div>
+
+      { savedTimes.length ? <Lista savedTimes={savedTimes} /> : <></>}
+
     </div>
   );
 }

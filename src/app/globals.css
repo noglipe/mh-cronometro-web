@@ -4,13 +4,17 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #23353F;
+  --buttonBackground: #2C3842;
+  --borderColor: #E6EDEF;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #243740;
+    --foreground: #FDEBD0;
+    --buttonBackground: #23353F;
+    --borderColor: #E6EDEF;
   }
 }
 
