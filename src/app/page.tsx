@@ -43,6 +43,10 @@ export default function Home() {
     setTime(0);
   };
 
+  const handleDelete = (index: number) => {
+    setSavedTimes((prev) => prev.filter((record) => record.index !== index));
+  };
+
   const handleClearRecords = () => {
     setSavedTimes([]);
     setCount(1);
@@ -97,7 +101,7 @@ export default function Home() {
         </Button>
       </div>
 
-      { savedTimes.length ? <Lista savedTimes={savedTimes} /> : <></>}
+      { savedTimes.length ? <Lista savedTimes={savedTimes} onDelete={handleDelete} /> : <></>}
 
     </div>
   );
